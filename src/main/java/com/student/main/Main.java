@@ -8,20 +8,30 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Student student = new Student(
-                "Rahul Patil",
-                "rahul@gmail.com",
-                "9876543210",
-                22,
-                "Male",
-                "Patan",
-                "Patan, Maharashtra"
-        );
-
         StudentDao studentDao = new StudentDaoImpl();
 
-        studentDao.addStudent(student);
+        // Find existing student
+        Student student = studentDao.getStudentById(2);
 
-        System.out.println("Student ID: " + student.getId());
+        if (student != null) {
+
+            // Update student details
+            student.setName("Rahul Pawar");
+            student.setEmail("rahulpawar@gmail.com");
+            student.setPhone("9876501234");
+            student.setAge(23);
+            student.setCity("Satara");
+            student.setAddress("Satara, Maharashtra");
+
+            // Save updated student
+            studentDao.updateStudent(student);
+
+            System.out.println("Updated Student:");
+            System.out.println(student);
+
+        } else {
+
+            System.out.println("Student not found.");
+        }
     }
 }
