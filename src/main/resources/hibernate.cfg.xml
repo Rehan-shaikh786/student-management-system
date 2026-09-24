@@ -45,6 +45,8 @@
 
         <!-- Entity -->
         <mapping class="com.student.entity.Student"/>
+        <mapping class="com.student.entity.Course"/>
+        <mapping class="com.student.entity.Enrollment"/>
 
     </session-factory>
 
