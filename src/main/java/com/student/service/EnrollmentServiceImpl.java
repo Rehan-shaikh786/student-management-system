@@ -3,6 +3,7 @@ package com.student.service;
 import com.student.dao.EnrollmentDao;
 import com.student.dao.EnrollmentDaoImpl;
 import com.student.entity.Enrollment;
+import com.student.exception.EnrollmentNotFoundException;
 
 import java.util.List;
 
@@ -14,28 +15,33 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public void addEnrollment(Enrollment enrollment) {
 
         if (enrollment == null) {
-            System.out.println("Enrollment cannot be null.");
-            return;
+            throw new IllegalArgumentException(
+                    "Enrollment cannot be null."
+            );
         }
 
         if (enrollment.getStudent() == null) {
-            System.out.println("Student is required for enrollment.");
-            return;
+            throw new IllegalArgumentException(
+                    "Student is required for enrollment."
+            );
         }
 
         if (enrollment.getCourse() == null) {
-            System.out.println("Course is required for enrollment.");
-            return;
+            throw new IllegalArgumentException(
+                    "Course is required for enrollment."
+            );
         }
 
         if (enrollment.getStudent().getId() <= 0) {
-            System.out.println("Invalid student.");
-            return;
+            throw new IllegalArgumentException(
+                    "Invalid student."
+            );
         }
 
         if (enrollment.getCourse().getId() <= 0) {
-            System.out.println("Invalid course.");
-            return;
+            throw new IllegalArgumentException(
+                    "Invalid course."
+            );
         }
 
         enrollmentDao.addEnrollment(enrollment);
@@ -45,11 +51,21 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public Enrollment getEnrollmentById(int id) {
 
         if (id <= 0) {
-            System.out.println("Invalid enrollment ID.");
-            return null;
+            throw new IllegalArgumentException(
+                    "Invalid enrollment ID."
+            );
         }
 
-        return enrollmentDao.getEnrollmentById(id);
+        Enrollment enrollment =
+                enrollmentDao.getEnrollmentById(id);
+
+        if (enrollment == null) {
+            throw new EnrollmentNotFoundException(
+                    "Enrollment with ID " + id + " not found."
+            );
+        }
+
+        return enrollment;
     }
 
     @Override
@@ -61,8 +77,18 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public void deleteEnrollment(int id) {
 
         if (id <= 0) {
-            System.out.println("Invalid enrollment ID.");
-            return;
+            throw new IllegalArgumentException(
+                    "Invalid enrollment ID."
+            );
+        }
+
+        Enrollment enrollment =
+                enrollmentDao.getEnrollmentById(id);
+
+        if (enrollment == null) {
+            throw new EnrollmentNotFoundException(
+                    "Enrollment with ID " + id + " not found."
+            );
         }
 
         enrollmentDao.deleteEnrollment(id);

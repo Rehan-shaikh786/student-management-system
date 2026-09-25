@@ -3,6 +3,7 @@ package com.student.service;
 import com.student.dao.CourseDao;
 import com.student.dao.CourseDaoImpl;
 import com.student.entity.Course;
+import com.student.exception.CourseNotFoundException;
 
 import java.util.List;
 
@@ -14,34 +15,31 @@ public class CourseServiceImpl implements CourseService {
     public void addCourse(Course course) {
 
         if (course == null) {
-            System.out.println("Course cannot be null.");
-            return;
+            throw new IllegalArgumentException("Course cannot be null.");
         }
 
         if (course.getCourseName() == null ||
                 course.getCourseName().trim().isEmpty()) {
 
-            System.out.println("Course name is required.");
-            return;
+            throw new IllegalArgumentException("Course name is required.");
         }
 
         if (course.getCourseCode() == null ||
                 course.getCourseCode().trim().isEmpty()) {
 
-            System.out.println("Course code is required.");
-            return;
+            throw new IllegalArgumentException("Course code is required.");
         }
 
         if (course.getDuration() == null ||
                 course.getDuration().trim().isEmpty()) {
 
-            System.out.println("Course duration is required.");
-            return;
+            throw new IllegalArgumentException("Course duration is required.");
         }
 
         if (course.getFees() <= 0) {
-            System.out.println("Course fees must be greater than 0.");
-            return;
+            throw new IllegalArgumentException(
+                    "Course fees must be greater than 0."
+            );
         }
 
         courseDao.addCourse(course);
@@ -51,11 +49,18 @@ public class CourseServiceImpl implements CourseService {
     public Course getCourseById(int id) {
 
         if (id <= 0) {
-            System.out.println("Invalid course ID.");
-            return null;
+            throw new IllegalArgumentException("Invalid course ID.");
         }
 
-        return courseDao.getCourseById(id);
+        Course course = courseDao.getCourseById(id);
+
+        if (course == null) {
+            throw new CourseNotFoundException(
+                    "Course with ID " + id + " not found."
+            );
+        }
+
+        return course;
     }
 
     @Override
@@ -67,32 +72,43 @@ public class CourseServiceImpl implements CourseService {
     public void updateCourse(Course course) {
 
         if (course == null) {
-            System.out.println("Course cannot be null.");
-            return;
+            throw new IllegalArgumentException("Course cannot be null.");
         }
 
         if (course.getId() <= 0) {
-            System.out.println("Invalid course ID.");
-            return;
+            throw new IllegalArgumentException("Invalid course ID.");
         }
 
         if (course.getCourseName() == null ||
                 course.getCourseName().trim().isEmpty()) {
 
-            System.out.println("Course name is required.");
-            return;
+            throw new IllegalArgumentException("Course name is required.");
         }
 
         if (course.getCourseCode() == null ||
                 course.getCourseCode().trim().isEmpty()) {
 
-            System.out.println("Course code is required.");
-            return;
+            throw new IllegalArgumentException("Course code is required.");
+        }
+
+        if (course.getDuration() == null ||
+                course.getDuration().trim().isEmpty()) {
+
+            throw new IllegalArgumentException("Course duration is required.");
         }
 
         if (course.getFees() <= 0) {
-            System.out.println("Course fees must be greater than 0.");
-            return;
+            throw new IllegalArgumentException(
+                    "Course fees must be greater than 0."
+            );
+        }
+
+        Course existingCourse = courseDao.getCourseById(course.getId());
+
+        if (existingCourse == null) {
+            throw new CourseNotFoundException(
+                    "Course with ID " + course.getId() + " not found."
+            );
         }
 
         courseDao.updateCourse(course);
@@ -102,8 +118,15 @@ public class CourseServiceImpl implements CourseService {
     public void deleteCourse(int id) {
 
         if (id <= 0) {
-            System.out.println("Invalid course ID.");
-            return;
+            throw new IllegalArgumentException("Invalid course ID.");
+        }
+
+        Course course = courseDao.getCourseById(id);
+
+        if (course == null) {
+            throw new CourseNotFoundException(
+                    "Course with ID " + id + " not found."
+            );
         }
 
         courseDao.deleteCourse(id);
