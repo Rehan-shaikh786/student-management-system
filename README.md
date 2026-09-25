@@ -178,4 +178,4 @@ The application uses:
                 └──────────┬──────────┘
                            │
                            ▼
-                     REST API
+                       REST API
