@@ -3,6 +3,8 @@ package com.student.controller;
 import com.student.dto.ApiResponse;
 import com.student.entity.Student;
 import com.student.service.StudentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/students")
+@Tag(
+        name = "Student Management",
+        description = "APIs for managing student records"
+)
 public class StudentController {
 
     private final StudentService studentService;
@@ -19,6 +25,10 @@ public class StudentController {
         this.studentService = studentService;
     }
 
+    @Operation(
+            summary = "Get all students",
+            description = "Returns a list of all students."
+    )
     @GetMapping
     public ResponseEntity<List<Student>> getAllStudents() {
 
@@ -27,6 +37,10 @@ public class StudentController {
         );
     }
 
+    @Operation(
+            summary = "Get student by ID",
+            description = "Returns a student using the specified student ID."
+    )
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudentById(
             @PathVariable int id) {
@@ -36,6 +50,10 @@ public class StudentController {
         );
     }
 
+    @Operation(
+            summary = "Add a new student",
+            description = "Creates a new student record."
+    )
     @PostMapping
     public ResponseEntity<ApiResponse> addStudent(
             @Valid @RequestBody Student student) {
@@ -52,6 +70,10 @@ public class StudentController {
                 .body(response);
     }
 
+    @Operation(
+            summary = "Update a student",
+            description = "Updates an existing student using the student ID."
+    )
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> updateStudent(
             @PathVariable int id,
@@ -69,6 +91,10 @@ public class StudentController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "Delete a student",
+            description = "Deletes an existing student using the student ID."
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deleteStudent(
             @PathVariable int id) {
