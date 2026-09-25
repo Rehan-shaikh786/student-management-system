@@ -7,6 +7,9 @@ import com.student.entity.User;
 import com.student.security.JwtService;
 import com.student.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -38,6 +41,21 @@ public class AuthController {
             summary = "Register a new user",
             description = "Creates a new user account with a securely encrypted password."
     )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "201",
+                    description = "User registered successfully",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = ApiResponse.class
+                            )
+                    )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid registration data"
+            )
+    })
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> registerUser(
             @Valid @RequestBody RegisterRequest request) {
@@ -65,6 +83,21 @@ public class AuthController {
             summary = "User login",
             description = "Authenticates a user and returns a JWT token."
     )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Login successful",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = LoginResponse.class
+                            )
+                    )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid email or password"
+            )
+    })
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody LoginRequest request) {
@@ -132,7 +165,8 @@ public class AuthController {
         )
         private String password;
 
-        public RegisterRequest() {}
+        public RegisterRequest() {
+        }
 
         public String getName() {
             return name;
