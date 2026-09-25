@@ -49,6 +49,11 @@ A backend REST API for managing students, courses and enrollments using Spring B
     - 403 Forbidden
     - 404 Not Found
     - 409 Conflict
+- ## Swagger UI
+
+The project provides interactive API documentation using Swagger UI.
+
+![Swagger UI](screenshots/swagger-api.png)
 
 - API Documentation
     - Swagger UI
