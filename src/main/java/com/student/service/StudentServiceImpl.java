@@ -70,7 +70,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void updateStudent(Student student) {
+    public void updateStudent(int id, Student student) {
 
         if (student == null) {
             throw new IllegalArgumentException(

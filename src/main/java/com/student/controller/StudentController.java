@@ -4,8 +4,10 @@ import com.student.dto.ApiResponse;
 import com.student.entity.Student;
 import com.student.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +29,18 @@ public class StudentController {
 
     @Operation(
             summary = "Get all students",
-            description = "Returns a list of all students."
+            description = "Returns all student records."
     )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Students retrieved successfully"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication is required"
+            )
+    })
     @GetMapping
     public ResponseEntity<List<Student>> getAllStudents() {
 
@@ -41,6 +53,20 @@ public class StudentController {
             summary = "Get student by ID",
             description = "Returns a student using the specified student ID."
     )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Student found successfully"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "Student not found"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication is required"
+            )
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudentById(
             @PathVariable int id) {
@@ -54,9 +80,28 @@ public class StudentController {
             summary = "Add a new student",
             description = "Creates a new student record."
     )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "201",
+                    description = "Student created successfully",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = ApiResponse.class
+                            )
+                    )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid student data"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "403",
+                    description = "Admin permission required"
+            )
+    })
     @PostMapping
     public ResponseEntity<ApiResponse> addStudent(
-            @Valid @RequestBody Student student) {
+            @RequestBody Student student) {
 
         studentService.addStudent(student);
 
@@ -74,14 +119,31 @@ public class StudentController {
             summary = "Update a student",
             description = "Updates an existing student using the student ID."
     )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Student updated successfully",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = ApiResponse.class
+                            )
+                    )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "Student not found"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "403",
+                    description = "Admin permission required"
+            )
+    })
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> updateStudent(
             @PathVariable int id,
-            @Valid @RequestBody Student student) {
+            @RequestBody Student student) {
 
-        student.setId(id);
-
-        studentService.updateStudent(student);
+        studentService.updateStudent(id, student);
 
         ApiResponse response = new ApiResponse(
                 200,
@@ -95,6 +157,25 @@ public class StudentController {
             summary = "Delete a student",
             description = "Deletes an existing student using the student ID."
     )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Student deleted successfully",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = ApiResponse.class
+                            )
+                    )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "Student not found"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "403",
+                    description = "Admin permission required"
+            )
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deleteStudent(
             @PathVariable int id) {
