@@ -6,14 +6,21 @@ import com.student.dto.LoginResponse;
 import com.student.entity.User;
 import com.student.security.JwtService;
 import com.student.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(
+        name = "Authentication",
+        description = "APIs for user registration and authentication"
+)
 public class AuthController {
 
     private final UserService userService;
@@ -27,6 +34,10 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
+    @Operation(
+            summary = "Register a new user",
+            description = "Creates a new user account with a securely encrypted password."
+    )
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> registerUser(
             @Valid @RequestBody RegisterRequest request) {
@@ -50,12 +61,18 @@ public class AuthController {
                 .body(response);
     }
 
+    @Operation(
+            summary = "User login",
+            description = "Authenticates a user and returns a JWT token."
+    )
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody LoginRequest request) {
 
         User user =
-                userService.getUserByEmail(request.getEmail());
+                userService.getUserByEmail(
+                        request.getEmail()
+                );
 
         if (user == null) {
             throw new IllegalArgumentException(
@@ -96,6 +113,11 @@ public class AuthController {
     public static class RegisterRequest {
 
         @NotBlank(message = "Name is required")
+        @Size(
+                min = 2,
+                max = 100,
+                message = "Name must be between 2 and 100 characters"
+        )
         private String name;
 
         @NotBlank(message = "Email is required")
@@ -103,10 +125,14 @@ public class AuthController {
         private String email;
 
         @NotBlank(message = "Password is required")
+        @Size(
+                min = 6,
+                max = 100,
+                message = "Password must be between 6 and 100 characters"
+        )
         private String password;
 
-        public RegisterRequest() {
-        }
+        public RegisterRequest() {}
 
         public String getName() {
             return name;
