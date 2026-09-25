@@ -96,3 +96,40 @@ EntityManager / JPA
 Hibernate
     ↓
 MySQL
+
+## 🗺️ Project Roadmap
+
+### ✅ Completed
+
+- [x] Student CRUD
+- [x] Course CRUD
+- [x] Enrollment management
+- [x] MySQL database integration
+- [x] Spring Data JPA
+- [x] Input validation
+- [x] Global exception handling
+- [x] User registration
+- [x] User login
+- [x] BCrypt password encryption
+- [x] JWT authentication
+- [x] USER / ADMIN authorization
+- [x] 401 Unauthorized handling
+- [x] 403 Forbidden handling
+- [x] Swagger / OpenAPI documentation
+- [x] Externalized database password
+- [x] Externalized JWT secret
+- [x] GitHub repository
+- [x] Project documentation
+
+### 🔄 Future Improvements
+
+- [ ] Add frontend using React
+- [ ] Add student search and filtering
+- [ ] Add pagination
+- [ ] Add sorting
+- [ ] Add dashboard with statistics
+- [ ] Add email notifications
+- [ ] Add automated unit and integration tests
+- [ ] Add Docker support
+- [ ] Add CI/CD pipeline
+- [ ] Deploy the application to the cloud
