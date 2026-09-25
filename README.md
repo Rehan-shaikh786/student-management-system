@@ -1,88 +1,29 @@
 # Student Management System
 
-A backend REST API for managing students, courses and enrollments using Spring Boot, Spring Data JPA, MySQL and JWT authentication.
+> A secure RESTful Student Management System built with Spring Boot, JPA, MySQL and JWT authentication.
 
-## 🚀 Features
-
-- Student Management
-    - Add student
-    - Get all students
-    - Get student by ID
-    - Update student
-    - Delete student
-
-- Course Management
-    - Add course
-    - Get all courses
-    - Get course by ID
-    - Update course
-    - Delete course
-
-- Enrollment Management
-    - Enroll student into course
-    - Get enrollments
-    - Get enrollment by ID
-    - Delete enrollment
-
-- Authentication
-    - User registration
-    - User login
-    - BCrypt password encryption
-    - JWT authentication
-
-- Authorization
-    - USER role
-    - ADMIN role
-    - ADMIN-only write operations
-    - Authenticated read operations
-
-- Validation
-    - Request validation
-    - Email validation
-    - Required field validation
-    - Duplicate resource handling
-
-- Exception Handling
-    - Global exception handler
-    - 400 Bad Request
-    - 401 Unauthorized
-    - 403 Forbidden
-    - 404 Not Found
-    - 409 Conflict
-- ## Swagger UI
-
-The project provides interactive API documentation using Swagger UI.
-
-![Swagger UI](screenshots/swagger-api.png)
-
-- API Documentation
-    - Swagger UI
-    - OpenAPI documentation
-    - JWT authorization in Swagger
+![Java](https://img.shields.io/badge/Java-24-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.5-brightgreen)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
+![JWT](https://img.shields.io/badge/JWT-Authentication-purple)
+![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-green)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
 
-## 🛠️ Technologies Used
+## 📌 About the Project
 
-| Technology | Purpose |
-|---|---|
-| Java 24 | Programming Language |
-| Spring Boot 3.5.5 | Backend Framework |
-| Spring Web | REST APIs |
-| Spring Data JPA | Database Access |
-| Hibernate | ORM |
-| MySQL | Database |
-| Spring Security | Authentication & Authorization |
-| JWT | Token-based Authentication |
-| BCrypt | Password Encryption |
-| Lombok | Boilerplate Reduction |
-| Swagger / OpenAPI | API Documentation |
-| Maven | Build Tool |
-| IntelliJ IDEA | Development IDE |
+Student Management System is a RESTful backend application developed using Spring Boot.
 
----
+The application provides APIs for managing:
 
-## 🏗️ Project Architecture
+- Students
+- Courses
+- Enrollments
+- User authentication
+- Role-based authorization
+
+The project follows a layered architecture:
 
 ```text
 Controller
@@ -91,45 +32,6 @@ Service
     ↓
 DAO
     ↓
-EntityManager / JPA
-    ↓
-Hibernate
+JPA / EntityManager
     ↓
 MySQL
-
-## 🗺️ Project Roadmap
-
-### ✅ Completed
-
-- [x] Student CRUD
-- [x] Course CRUD
-- [x] Enrollment management
-- [x] MySQL database integration
-- [x] Spring Data JPA
-- [x] Input validation
-- [x] Global exception handling
-- [x] User registration
-- [x] User login
-- [x] BCrypt password encryption
-- [x] JWT authentication
-- [x] USER / ADMIN authorization
-- [x] 401 Unauthorized handling
-- [x] 403 Forbidden handling
-- [x] Swagger / OpenAPI documentation
-- [x] Externalized database password
-- [x] Externalized JWT secret
-- [x] GitHub repository
-- [x] Project documentation
-
-### 🔄 Future Improvements
-
-- [ ] Add frontend using React
-- [ ] Add student search and filtering
-- [ ] Add pagination
-- [ ] Add sorting
-- [ ] Add dashboard with statistics
-- [ ] Add email notifications
-- [ ] Add automated unit and integration tests
-- [ ] Add Docker support
-- [ ] Add CI/CD pipeline
-- [ ] Deploy the application to the cloud
