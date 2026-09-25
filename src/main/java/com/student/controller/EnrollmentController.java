@@ -9,6 +9,8 @@ import com.student.entity.Student;
 import com.student.service.CourseService;
 import com.student.service.EnrollmentService;
 import com.student.service.StudentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/enrollments")
+@Tag(
+        name = "Enrollment Management",
+        description = "APIs for managing student course enrollments"
+)
 public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
@@ -33,6 +39,10 @@ public class EnrollmentController {
         this.courseService = courseService;
     }
 
+    @Operation(
+            summary = "Add a new enrollment",
+            description = "Enrolls a student into a course."
+    )
     @PostMapping
     public ResponseEntity<ApiResponse> addEnrollment(
             @Valid @RequestBody EnrollmentRequest request) {
@@ -58,6 +68,10 @@ public class EnrollmentController {
                 .body(response);
     }
 
+    @Operation(
+            summary = "Get all enrollments",
+            description = "Returns all student course enrollments."
+    )
     @GetMapping
     public ResponseEntity<List<EnrollmentResponse>> getAllEnrollments() {
 
@@ -66,6 +80,10 @@ public class EnrollmentController {
         );
     }
 
+    @Operation(
+            summary = "Get enrollment by ID",
+            description = "Returns an enrollment using the specified enrollment ID."
+    )
     @GetMapping("/{id}")
     public ResponseEntity<EnrollmentResponse> getEnrollmentById(
             @PathVariable int id) {
@@ -75,6 +93,10 @@ public class EnrollmentController {
         );
     }
 
+    @Operation(
+            summary = "Delete an enrollment",
+            description = "Deletes an existing enrollment using the enrollment ID."
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deleteEnrollment(
             @PathVariable int id) {
