@@ -1,135 +1,69 @@
 package com.student.dao;
 
 import com.student.entity.Enrollment;
-import com.student.util.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Repository
+@Transactional
 public class EnrollmentDaoImpl implements EnrollmentDao {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void addEnrollment(Enrollment enrollment) {
-
-        Session session = null;
-        Transaction transaction = null;
-
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-
-            transaction = session.beginTransaction();
-
-            session.save(enrollment);
-
-            transaction.commit();
-
-            System.out.println("Enrollment added successfully.");
-
-        } catch (Exception e) {
-
-            if (transaction != null) {
-                transaction.rollback();
-            }
-
-            e.printStackTrace();
-
-        } finally {
-
-            if (session != null) {
-                session.close();
-            }
-        }
+        entityManager.persist(enrollment);
     }
 
     @Override
     public Enrollment getEnrollmentById(int id) {
-
-        Session session = null;
-
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-
-            return session.get(Enrollment.class, id);
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            return null;
-
-        } finally {
-
-            if (session != null) {
-                session.close();
-            }
-        }
+        return entityManager.find(Enrollment.class, id);
     }
 
     @Override
     public List<Enrollment> getAllEnrollments() {
-
-        Session session = null;
-
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-
-            return session
-                    .createQuery("FROM Enrollment", Enrollment.class)
-                    .list();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            return null;
-
-        } finally {
-
-            if (session != null) {
-                session.close();
-            }
-        }
+        return entityManager
+                .createQuery(
+                        "SELECT e FROM Enrollment e",
+                        Enrollment.class
+                )
+                .getResultList();
     }
 
     @Override
     public void deleteEnrollment(int id) {
 
-        Session session = null;
-        Transaction transaction = null;
+        Enrollment enrollment =
+                entityManager.find(Enrollment.class, id);
 
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-
-            transaction = session.beginTransaction();
-
-            Enrollment enrollment =
-                    session.get(Enrollment.class, id);
-
-            if (enrollment != null) {
-
-                session.delete(enrollment);
-
-                System.out.println("Enrollment deleted successfully.");
-
-            } else {
-
-                System.out.println("Enrollment not found.");
-            }
-
-            transaction.commit();
-
-        } catch (Exception e) {
-
-            if (transaction != null) {
-                transaction.rollback();
-            }
-
-            e.printStackTrace();
-
-        } finally {
-
-            if (session != null) {
-                session.close();
-            }
+        if (enrollment != null) {
+            entityManager.remove(enrollment);
         }
+    }
+
+    @Override
+    public Enrollment getEnrollmentByStudentAndCourse(
+            int studentId,
+            int courseId) {
+
+        List<Enrollment> enrollments = entityManager
+                .createQuery(
+                        "SELECT e FROM Enrollment e " +
+                                "WHERE e.student.id = :studentId " +
+                                "AND e.course.id = :courseId",
+                        Enrollment.class
+                )
+                .setParameter("studentId", studentId)
+                .setParameter("courseId", courseId)
+                .getResultList();
+
+        return enrollments.isEmpty()
+                ? null
+                : enrollments.get(0);
     }
 }

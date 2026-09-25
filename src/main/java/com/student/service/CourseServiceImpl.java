@@ -1,44 +1,39 @@
 package com.student.service;
 
 import com.student.dao.CourseDao;
-import com.student.dao.CourseDaoImpl;
 import com.student.entity.Course;
 import com.student.exception.CourseNotFoundException;
+import com.student.exception.DuplicateResourceException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class CourseServiceImpl implements CourseService {
 
-    private final CourseDao courseDao = new CourseDaoImpl();
+    private final CourseDao courseDao;
+
+    public CourseServiceImpl(CourseDao courseDao) {
+        this.courseDao = courseDao;
+    }
 
     @Override
     public void addCourse(Course course) {
 
         if (course == null) {
-            throw new IllegalArgumentException("Course cannot be null.");
-        }
-
-        if (course.getCourseName() == null ||
-                course.getCourseName().trim().isEmpty()) {
-
-            throw new IllegalArgumentException("Course name is required.");
-        }
-
-        if (course.getCourseCode() == null ||
-                course.getCourseCode().trim().isEmpty()) {
-
-            throw new IllegalArgumentException("Course code is required.");
-        }
-
-        if (course.getDuration() == null ||
-                course.getDuration().trim().isEmpty()) {
-
-            throw new IllegalArgumentException("Course duration is required.");
-        }
-
-        if (course.getFees() <= 0) {
             throw new IllegalArgumentException(
-                    "Course fees must be greater than 0."
+                    "Course cannot be null."
+            );
+        }
+
+        Course existingCourse =
+                courseDao.getCourseByCode(course.getCourseCode());
+
+        if (existingCourse != null) {
+            throw new DuplicateResourceException(
+                    "Course with code " +
+                            course.getCourseCode() +
+                            " already exists."
             );
         }
 
@@ -49,14 +44,19 @@ public class CourseServiceImpl implements CourseService {
     public Course getCourseById(int id) {
 
         if (id <= 0) {
-            throw new IllegalArgumentException("Invalid course ID.");
+            throw new IllegalArgumentException(
+                    "Invalid course ID."
+            );
         }
 
-        Course course = courseDao.getCourseById(id);
+        Course course =
+                courseDao.getCourseById(id);
 
         if (course == null) {
             throw new CourseNotFoundException(
-                    "Course with ID " + id + " not found."
+                    "Course with ID " +
+                            id +
+                            " not found."
             );
         }
 
@@ -65,6 +65,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<Course> getAllCourses() {
+
         return courseDao.getAllCourses();
     }
 
@@ -72,42 +73,38 @@ public class CourseServiceImpl implements CourseService {
     public void updateCourse(Course course) {
 
         if (course == null) {
-            throw new IllegalArgumentException("Course cannot be null.");
-        }
-
-        if (course.getId() <= 0) {
-            throw new IllegalArgumentException("Invalid course ID.");
-        }
-
-        if (course.getCourseName() == null ||
-                course.getCourseName().trim().isEmpty()) {
-
-            throw new IllegalArgumentException("Course name is required.");
-        }
-
-        if (course.getCourseCode() == null ||
-                course.getCourseCode().trim().isEmpty()) {
-
-            throw new IllegalArgumentException("Course code is required.");
-        }
-
-        if (course.getDuration() == null ||
-                course.getDuration().trim().isEmpty()) {
-
-            throw new IllegalArgumentException("Course duration is required.");
-        }
-
-        if (course.getFees() <= 0) {
             throw new IllegalArgumentException(
-                    "Course fees must be greater than 0."
+                    "Course cannot be null."
             );
         }
 
-        Course existingCourse = courseDao.getCourseById(course.getId());
+        if (course.getId() <= 0) {
+            throw new IllegalArgumentException(
+                    "Invalid course ID."
+            );
+        }
+
+        Course existingCourse =
+                courseDao.getCourseById(course.getId());
 
         if (existingCourse == null) {
             throw new CourseNotFoundException(
-                    "Course with ID " + course.getId() + " not found."
+                    "Course with ID " +
+                            course.getId() +
+                            " not found."
+            );
+        }
+
+        Course courseWithSameCode =
+                courseDao.getCourseByCode(course.getCourseCode());
+
+        if (courseWithSameCode != null &&
+                courseWithSameCode.getId() != course.getId()) {
+
+            throw new DuplicateResourceException(
+                    "Course with code " +
+                            course.getCourseCode() +
+                            " already exists."
             );
         }
 
@@ -118,14 +115,19 @@ public class CourseServiceImpl implements CourseService {
     public void deleteCourse(int id) {
 
         if (id <= 0) {
-            throw new IllegalArgumentException("Invalid course ID.");
+            throw new IllegalArgumentException(
+                    "Invalid course ID."
+            );
         }
 
-        Course course = courseDao.getCourseById(id);
+        Course course =
+                courseDao.getCourseById(id);
 
         if (course == null) {
             throw new CourseNotFoundException(
-                    "Course with ID " + id + " not found."
+                    "Course with ID " +
+                            id +
+                            " not found."
             );
         }
 

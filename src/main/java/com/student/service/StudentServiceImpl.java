@@ -1,53 +1,40 @@
 package com.student.service;
 
 import com.student.dao.StudentDao;
-import com.student.dao.StudentDaoImpl;
 import com.student.entity.Student;
+import com.student.exception.DuplicateResourceException;
 import com.student.exception.StudentNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class StudentServiceImpl implements StudentService {
 
-    private final StudentDao studentDao = new StudentDaoImpl();
+    private final StudentDao studentDao;
+
+    public StudentServiceImpl(StudentDao studentDao) {
+        this.studentDao = studentDao;
+    }
 
     @Override
     public void addStudent(Student student) {
 
         if (student == null) {
-            throw new IllegalArgumentException("Student cannot be null.");
+            throw new IllegalArgumentException(
+                    "Student cannot be null."
+            );
         }
 
-        if (student.getName() == null ||
-                student.getName().trim().isEmpty()) {
+        Student existingStudent =
+                studentDao.getStudentByEmail(student.getEmail());
 
-            throw new IllegalArgumentException("Student name is required.");
-        }
-
-        if (student.getEmail() == null ||
-                student.getEmail().trim().isEmpty()) {
-
-            throw new IllegalArgumentException("Student email is required.");
-        }
-
-        if (!student.getEmail().contains("@")) {
-            throw new IllegalArgumentException("Invalid email address.");
-        }
-
-        if (student.getAge() <= 0) {
-            throw new IllegalArgumentException("Age must be greater than 0.");
-        }
-
-        if (student.getPhone() == null ||
-                student.getPhone().trim().isEmpty()) {
-
-            throw new IllegalArgumentException("Phone number is required.");
-        }
-
-        if (student.getCity() == null ||
-                student.getCity().trim().isEmpty()) {
-
-            throw new IllegalArgumentException("City is required.");
+        if (existingStudent != null) {
+            throw new DuplicateResourceException(
+                    "Student with email " +
+                            student.getEmail() +
+                            " already exists."
+            );
         }
 
         studentDao.addStudent(student);
@@ -57,14 +44,19 @@ public class StudentServiceImpl implements StudentService {
     public Student getStudentById(int id) {
 
         if (id <= 0) {
-            throw new IllegalArgumentException("Invalid student ID.");
+            throw new IllegalArgumentException(
+                    "Invalid student ID."
+            );
         }
 
-        Student student = studentDao.getStudentById(id);
+        Student student =
+                studentDao.getStudentById(id);
 
         if (student == null) {
             throw new StudentNotFoundException(
-                    "Student with ID " + id + " not found."
+                    "Student with ID " +
+                            id +
+                            " not found."
             );
         }
 
@@ -81,31 +73,39 @@ public class StudentServiceImpl implements StudentService {
     public void updateStudent(Student student) {
 
         if (student == null) {
-            throw new IllegalArgumentException("Student cannot be null.");
+            throw new IllegalArgumentException(
+                    "Student cannot be null."
+            );
         }
 
         if (student.getId() <= 0) {
-            throw new IllegalArgumentException("Invalid student ID.");
+            throw new IllegalArgumentException(
+                    "Invalid student ID."
+            );
         }
 
-        if (student.getName() == null ||
-                student.getName().trim().isEmpty()) {
+        Student existingStudent =
+                studentDao.getStudentById(student.getId());
 
-            throw new IllegalArgumentException("Student name is required.");
+        if (existingStudent == null) {
+            throw new StudentNotFoundException(
+                    "Student with ID " +
+                            student.getId() +
+                            " not found."
+            );
         }
 
-        if (student.getEmail() == null ||
-                student.getEmail().trim().isEmpty()) {
+        Student studentWithSameEmail =
+                studentDao.getStudentByEmail(student.getEmail());
 
-            throw new IllegalArgumentException("Student email is required.");
-        }
+        if (studentWithSameEmail != null &&
+                studentWithSameEmail.getId() != student.getId()) {
 
-        if (!student.getEmail().contains("@")) {
-            throw new IllegalArgumentException("Invalid email address.");
-        }
-
-        if (student.getAge() <= 0) {
-            throw new IllegalArgumentException("Age must be greater than 0.");
+            throw new DuplicateResourceException(
+                    "Student with email " +
+                            student.getEmail() +
+                            " already exists."
+            );
         }
 
         studentDao.updateStudent(student);
@@ -115,14 +115,19 @@ public class StudentServiceImpl implements StudentService {
     public void deleteStudent(int id) {
 
         if (id <= 0) {
-            throw new IllegalArgumentException("Invalid student ID.");
+            throw new IllegalArgumentException(
+                    "Invalid student ID."
+            );
         }
 
-        Student student = studentDao.getStudentById(id);
+        Student student =
+                studentDao.getStudentById(id);
 
         if (student == null) {
             throw new StudentNotFoundException(
-                    "Student with ID " + id + " not found."
+                    "Student with ID " +
+                            id +
+                            " not found."
             );
         }
 

@@ -1,6 +1,8 @@
 package com.student.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "course")
@@ -10,14 +12,21 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Course name is required")
+    @Column(name = "course_name", nullable = false)
     private String courseName;
 
-    @Column(unique = true)
+    @NotBlank(message = "Course code is required")
+    @Column(name = "course_code", unique = true)
     private String courseCode;
 
+    @NotBlank(message = "Course duration is required")
+    @Column(name = "duration")
     private String duration;
 
+    @DecimalMin(value = "0.0", inclusive = false,
+            message = "Course fees must be greater than 0")
+    @Column(name = "fees")
     private double fees;
 
     public Course() {

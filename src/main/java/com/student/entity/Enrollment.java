@@ -1,6 +1,8 @@
 package com.student.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "enrollment")
@@ -10,10 +12,14 @@ public class Enrollment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Valid
+    @NotNull(message = "Student is required")
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
+    @Valid
+    @NotNull(message = "Course is required")
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
@@ -54,8 +60,8 @@ public class Enrollment {
     public String toString() {
         return "Enrollment{" +
                 "id=" + id +
-                ", student=" + student.getName() +
-                ", course=" + course.getCourseName() +
+                ", student=" + student +
+                ", course=" + course +
                 '}';
     }
 }

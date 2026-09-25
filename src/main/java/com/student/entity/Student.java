@@ -1,6 +1,10 @@
 package com.student.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "student")
@@ -10,27 +14,39 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Student name is required")
+    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(unique = true)
+    @NotBlank(message = "Email is required")
+    @Email(message = "Enter a valid email address")
+    @Column(name = "email", unique = true)
     private String email;
 
+    @NotBlank(message = "Phone number is required")
+    @Size(min = 10, max = 15, message = "Phone number must be between 10 and 15 digits")
+    @Column(name = "phone")
     private String phone;
 
+    @Min(value = 1, message = "Age must be greater than 0")
+    @Column(name = "age")
     private int age;
 
+    @NotBlank(message = "Gender is required")
+    @Column(name = "gender")
     private String gender;
 
+    @NotBlank(message = "City is required")
+    @Column(name = "city")
     private String city;
 
+    @Column(name = "address")
     private String address;
 
-    // Default constructor
     public Student() {
     }
 
-    // Parameterized constructor
     public Student(String name, String email, String phone,
                    int age, String gender, String city, String address) {
         this.name = name;

@@ -6,14 +6,13 @@ import java.util.List;
 
 public interface EnrollmentDao {
 
-    // Create
     void addEnrollment(Enrollment enrollment);
 
-    // Read
     Enrollment getEnrollmentById(int id);
 
     List<Enrollment> getAllEnrollments();
 
-    // Delete
     void deleteEnrollment(int id);
+
+    Enrollment getEnrollmentByStudentAndCourse(int studentId, int courseId);
 }

@@ -1,167 +1,63 @@
 package com.student.dao;
 
 import com.student.entity.Course;
-import com.student.util.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Repository
+@Transactional
 public class CourseDaoImpl implements CourseDao {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void addCourse(Course course) {
-
-        Session session = null;
-        Transaction transaction = null;
-
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-
-            transaction = session.beginTransaction();
-
-            session.save(course);
-
-            transaction.commit();
-
-            System.out.println("Course added successfully.");
-
-        } catch (Exception e) {
-
-            if (transaction != null) {
-                transaction.rollback();
-            }
-
-            e.printStackTrace();
-
-        } finally {
-
-            if (session != null) {
-                session.close();
-            }
-        }
+        entityManager.persist(course);
     }
 
     @Override
     public Course getCourseById(int id) {
-
-        Session session = null;
-
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-
-            return session.get(Course.class, id);
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            return null;
-
-        } finally {
-
-            if (session != null) {
-                session.close();
-            }
-        }
+        return entityManager.find(Course.class, id);
     }
 
     @Override
     public List<Course> getAllCourses() {
-
-        Session session = null;
-
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-
-            return session
-                    .createQuery("FROM Course", Course.class)
-                    .list();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            return null;
-
-        } finally {
-
-            if (session != null) {
-                session.close();
-            }
-        }
+        return entityManager
+                .createQuery("SELECT c FROM Course c", Course.class)
+                .getResultList();
     }
 
     @Override
     public void updateCourse(Course course) {
-
-        Session session = null;
-        Transaction transaction = null;
-
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-
-            transaction = session.beginTransaction();
-
-            session.update(course);
-
-            transaction.commit();
-
-            System.out.println("Course updated successfully.");
-
-        } catch (Exception e) {
-
-            if (transaction != null) {
-                transaction.rollback();
-            }
-
-            e.printStackTrace();
-
-        } finally {
-
-            if (session != null) {
-                session.close();
-            }
-        }
+        entityManager.merge(course);
     }
 
     @Override
     public void deleteCourse(int id) {
 
-        Session session = null;
-        Transaction transaction = null;
+        Course course = entityManager.find(Course.class, id);
 
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-
-            transaction = session.beginTransaction();
-
-            Course course = session.get(Course.class, id);
-
-            if (course != null) {
-
-                session.delete(course);
-
-                System.out.println("Course deleted successfully.");
-
-            } else {
-
-                System.out.println("Course not found.");
-            }
-
-            transaction.commit();
-
-        } catch (Exception e) {
-
-            if (transaction != null) {
-                transaction.rollback();
-            }
-
-            e.printStackTrace();
-
-        } finally {
-
-            if (session != null) {
-                session.close();
-            }
+        if (course != null) {
+            entityManager.remove(course);
         }
+    }
+
+    @Override
+    public Course getCourseByCode(String courseCode) {
+
+        List<Course> courses = entityManager
+                .createQuery(
+                        "SELECT c FROM Course c WHERE c.courseCode = :courseCode",
+                        Course.class
+                )
+                .setParameter("courseCode", courseCode)
+                .getResultList();
+
+        return courses.isEmpty() ? null : courses.get(0);
     }
 }

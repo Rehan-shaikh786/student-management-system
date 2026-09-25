@@ -1,15 +1,23 @@
 package com.student.service;
 
 import com.student.dao.EnrollmentDao;
-import com.student.dao.EnrollmentDaoImpl;
+import com.student.dto.EnrollmentResponse;
 import com.student.entity.Enrollment;
+import com.student.exception.DuplicateResourceException;
 import com.student.exception.EnrollmentNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Service
 public class EnrollmentServiceImpl implements EnrollmentService {
 
-    private final EnrollmentDao enrollmentDao = new EnrollmentDaoImpl();
+    private final EnrollmentDao enrollmentDao;
+
+    public EnrollmentServiceImpl(EnrollmentDao enrollmentDao) {
+        this.enrollmentDao = enrollmentDao;
+    }
 
     @Override
     public void addEnrollment(Enrollment enrollment) {
@@ -22,25 +30,28 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         if (enrollment.getStudent() == null) {
             throw new IllegalArgumentException(
-                    "Student is required for enrollment."
+                    "Student is required."
             );
         }
 
         if (enrollment.getCourse() == null) {
             throw new IllegalArgumentException(
-                    "Course is required for enrollment."
+                    "Course is required."
             );
         }
 
-        if (enrollment.getStudent().getId() <= 0) {
-            throw new IllegalArgumentException(
-                    "Invalid student."
-            );
-        }
+        int studentId = enrollment.getStudent().getId();
+        int courseId = enrollment.getCourse().getId();
 
-        if (enrollment.getCourse().getId() <= 0) {
-            throw new IllegalArgumentException(
-                    "Invalid course."
+        Enrollment existingEnrollment =
+                enrollmentDao.getEnrollmentByStudentAndCourse(
+                        studentId,
+                        courseId
+                );
+
+        if (existingEnrollment != null) {
+            throw new DuplicateResourceException(
+                    "Student is already enrolled in this course."
             );
         }
 
@@ -61,7 +72,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         if (enrollment == null) {
             throw new EnrollmentNotFoundException(
-                    "Enrollment with ID " + id + " not found."
+                    "Enrollment with ID " +
+                            id +
+                            " not found."
             );
         }
 
@@ -87,10 +100,43 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         if (enrollment == null) {
             throw new EnrollmentNotFoundException(
-                    "Enrollment with ID " + id + " not found."
+                    "Enrollment with ID " +
+                            id +
+                            " not found."
             );
         }
 
         enrollmentDao.deleteEnrollment(id);
+    }
+
+    @Override
+    public EnrollmentResponse getEnrollmentResponseById(int id) {
+
+        Enrollment enrollment = getEnrollmentById(id);
+
+        return convertToResponse(enrollment);
+    }
+
+    @Override
+    public List<EnrollmentResponse> getAllEnrollmentResponses() {
+
+        return enrollmentDao.getAllEnrollments()
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    private EnrollmentResponse convertToResponse(
+            Enrollment enrollment) {
+
+        return new EnrollmentResponse(
+                enrollment.getId(),
+                enrollment.getStudent().getId(),
+                enrollment.getStudent().getName(),
+                enrollment.getStudent().getEmail(),
+                enrollment.getCourse().getId(),
+                enrollment.getCourse().getCourseName(),
+                enrollment.getCourse().getCourseCode()
+        );
     }
 }
